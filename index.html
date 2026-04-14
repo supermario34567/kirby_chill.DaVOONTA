@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Kirby's Dream Site</title>
+    <style>
+        html, body {
+            height: 100%; margin: 0; padding: 0;
+            background-color: white; overflow: hidden;
+            font-family: 'Arial Black', sans-serif; cursor: pointer;
+        }
+        #logo-container {
+            position: absolute; width: 100%; text-align: center;
+            top: 50px; z-index: 100; user-select: none;
+        }
+        #logo { width: 500px; filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.05)); }
+        .rolling-kirby {
+            position: absolute; width: 150px; 
+            pointer-events: none; z-index: 10;
+        }
+        #hint {
+            position: fixed; bottom: 20px; width: 100%;
+            text-align: center; color: #ccc; font-size: 14px; z-index: 100;
+        }
+    </style>
+</head>
+<body onclick="startEverything()">
+
+    <div id="logo-container">
+        <img src="logo.webp" id="logo" alt="Kirby's Dream Land">
+    </div>
+
+    <div id="hint">Кликни, чтобы включить музыку и запустить поток Кирби! 🎵</div>
+
+    <audio id="bgMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
+
+    <script>
+        let started = false;
+
+        function startEverything() {
+            if (!started) {
+                document.getElementById('bgMusic').play().catch(e => {});
+                document.getElementById('hint').style.display = 'none';
+                // Спавним Кирби каждые 2 секунды (чтобы не было каши)
+                setInterval(spawnKirby, 2000);
+                started = true;
+            }
+            spawnKirby();
+        }
+
+        function spawnKirby() {
+            const img = document.createElement('img');
+            img.src = 'kirby.gif'; 
+            img.className = 'rolling-kirby';
+            
+            let x = -200;
+            let y = Math.random() * (window.innerHeight - 150);
+            // Скорость делаем умеренную, чтобы глаз не дергался
+            let speed = 2 + Math.random() * 3; 
+
+            img.style.top = y + 'px';
+            document.body.appendChild(img);
+
+            function move() {
+                x += speed;
+                img.style.left = x + 'px';
+                
+                if (x < window.innerWidth + 200) {
+                    requestAnimationFrame(move);
+                } else {
+                    img.remove();
+                }
+            }
+            move();
+        }
+    </script>
+</body>
+</html>
